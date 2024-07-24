@@ -1,4 +1,4 @@
-const localUrl = "http://localhost:80/proyecto_laravel/public";
+const localUrl = "http://localhost:80/proyecto_web/public";
 
 function openDialog(fill) {
     let dialog, form;

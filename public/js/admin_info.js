@@ -1,4 +1,4 @@
-const localUrl="http://localhost:80/proyecto_laravel/public"
+const localUrl="http://localhost:80/proyecto_web/public"
 
 // Función para convertir cadenas de texto en formato snake_case a formato Title Case.
 function snakeToTitleCase(snakeStr) {
