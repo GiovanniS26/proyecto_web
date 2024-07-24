@@ -11,7 +11,6 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
         
         <link rel="stylesheet" type="text/css" href="{{ asset('styles.css') }}">
-        <!-- @vite('resources/css/app.css') -->
     </head>
     <body class="bg-sky">
         <header class="flex items-center justify-between h-16 w-full fixed bg-black z-50">

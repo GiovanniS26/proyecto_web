@@ -14,7 +14,6 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="{{ asset('styles.css') }}">
-    <!-- @vite('resources/css/app.css') -->
 </head>
 
 <body class="bg-sky">
