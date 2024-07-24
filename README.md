@@ -59,7 +59,7 @@ Luego de esto, usamos el comando:
 
 Una vez hecho todo este proceso nuestra página estará disponible para su prueba usando la siguiente url:
 
-    http://localhost:80/proyecto_laravel/public/
+    http://localhost:80/proyecto_web/public/
 
 ## Acceso
 
