@@ -14,18 +14,18 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="{{ asset('styles.css') }}">
-    @vite('resources/css/app.css')
+    <!-- @vite('resources/css/app.css') -->
 </head>
 
 <body class="bg-sky">
     <header class="flex items-center justify-between h-16 w-full fixed bg-black z-50">
         @auth
             <div class="flex items-center justify-center">
-                <a href="{{route('index')}}">
-                    <img class="m-4 w-12 h-auto" src="./assets/super_logo.png" alt="Logo" />
+                <a href="{{route('dashboard')}}">
+                    <img class="m-4 w-12 h-auto" src="{{ asset('assets/super_logo.png') }}" alt="Logo" />
                 </a>
-                <a class="text-white hover:animate-[pulse_2s_cubic-bezier(0.4,_0,_0.6,_1)_infinite] hover:duration-500 hover:-translate-y-2 hover:underline"
-                    href="{{route('dashboard')}}">Dashboard</a>
+                <!-- <a class="text-white hover:animate-[pulse_2s_cubic-bezier(0.4,_0,_0.6,_1)_infinite] hover:duration-500 hover:-translate-y-2 hover:underline"
+                    href="{{route('dashboard')}}">Dashboard</a> -->
             </div>
             <nav class="flex items-center gap-4">
                 <div class="flex items-center bg-blue-500 rounded p-2">
@@ -40,7 +40,7 @@
         @else
             <div class="flex justify-center items-center w-full">
                 <a href="{{route('index')}}">
-                    <img class="m-4 w-12 h-auto" src="./assets/super_logo.png" alt="Logo" />
+                    <img class="m-4 w-12 h-auto" src="{{ asset('assets/super_logo.png') }}" alt="Logo" />
                 </a>
             </div>
         @endauth
@@ -51,11 +51,15 @@
             <nav class="flex flex-col w-auto p-4 mt-16 bg-black fixed h-full gap-2 z-10">
                 @if (Auth::user()->role->name == "admin")
                     <a class="text-white hover:animate-[pulse_2s_cubic-bezier(0.4,_0,_0.6,_1)_infinite] hover:duration-500 hover:underline"
+                        href="{{route('roles_page')}}">Roles</a>
+                    <a class="text-white hover:animate-[pulse_2s_cubic-bezier(0.4,_0,_0.6,_1)_infinite] hover:duration-500 hover:underline"
                         href="{{route('users_page')}}">Usuarios</a>
                     <a class="text-white hover:animate-[pulse_2s_cubic-bezier(0.4,_0,_0.6,_1)_infinite] hover:duration-500 hover:underline"
                         href="{{route('clients_page')}}">Clientes</a>
                     <a class="text-white hover:animate-[pulse_2s_cubic-bezier(0.4,_0,_0.6,_1)_infinite] hover:duration-500 hover:underline"
                         href="{{route('projects_page')}}">Proyectos</a>
+<!--                     <a class="text-white hover:animate-[pulse_2s_cubic-bezier(0.4,_0,_0.6,_1)_infinite] hover:duration-500 hover:underline"
+                        href="{{route('tasks_page')}}">Tareas</a> -->
                     <a class="text-white hover:animate-[pulse_2s_cubic-bezier(0.4,_0,_0.6,_1)_infinite] hover:duration-500 hover:underline"
                         href="{{route('leads_page')}}">Leads</a>
                     <a class="text-white hover:animate-[pulse_2s_cubic-bezier(0.4,_0,_0.6,_1)_infinite] hover:duration-500 hover:underline"

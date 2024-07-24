@@ -82,7 +82,7 @@ class TicketController extends Controller
 
         Ticket::create($validatedData);
 
-        return redirect()->route('tickets_page')->with('success', 'Ticket created successfully.');
+        return redirect()->route('tickets_page')->with('success', 'Ticket creado exitosamente.');
     }
 
     public function update(Request $request, $id)
@@ -96,6 +96,11 @@ class TicketController extends Controller
 
         // Encontrar y actualizar el ticket
         $ticket = Ticket::findOrFail($id);
+        
+        if (!$ticket) {
+            return redirect()->route('tickets_page')->with('error', 'Ticket no encontrado.');
+        }
+        
         $ticket->update([
             'subject' => $validatedData['subject'],
             'description' => $validatedData['description'],
@@ -103,35 +108,45 @@ class TicketController extends Controller
             'user_id' => $validatedData['user_id']
         ]);
 
-        return redirect()->route('tickets_page')->with('success', 'Ticket updated successfully.');
+        return redirect()->route('tickets_page')->with('success', 'Ticket actualizado exitosamente.');
     }
 
     public function resolve($id)
     {
         // Encontrar y actualizar el ticket
         $ticket = Ticket::findOrFail($id);
+        
+        if (!$ticket) {
+            return redirect()->route('tickets_page')->with('error', 'Ticket no encontrado.');
+        }
+        
         $ticket->update([
             'status' => 'resolved',
         ]);
 
-        return redirect()->route('tickets_page')->with('success', 'Ticket updated successfully.');
+        return redirect()->route('tickets_page')->with('success', 'Ticket actualizado exitosamente.');
     }
 
     public function close($id)
     {
         // Encontrar y actualizar el ticket
         $ticket = Ticket::findOrFail($id);
+        
+        if (!$ticket) {
+            return redirect()->route('tickets_page')->with('error', 'Ticket no encontrado.');
+        }
+        
         $ticket->update([
             'status' => 'closed',
         ]);
 
-        return redirect()->route('tickets_page')->with('success', 'Ticket updated successfully.');
+        return redirect()->route('tickets_page')->with('success', 'Ticket actualizado exitosamente.');
     }
 
     public function destroy(Ticket $ticket)
     {  //borrar ticket
         $ticket->delete();
-        return redirect()->route('tickets_page')->with('success', 'Ticket deleted successfully.');
+        return redirect()->route('tickets_page')->with('success', 'Ticket eliminado exitosamente.');
     }
 
 }

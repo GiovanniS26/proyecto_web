@@ -1,12 +1,12 @@
 <script>
-    var leads = @json($leads);
+    var tasks = @json($tasks);
 </script>
 
 <x-app-layout>
     <div class="h-full pl-32 pr-4 pt-24 overflow-auto">
         <div class="rounded bg-white p-4">
             <div class="flex items-center justify-center">
-                <h1 class="text-4xl">Leads</h1>
+                <h1 class="text-4xl">Tareas</h1>
             </div>
             <!-- Response message -->
             <div id="response-message" class="flex flex-col items-center justify-center text-green-500">
@@ -27,31 +27,30 @@
                 </div>
             @endif
             <!-- User Table -->
-            <div id="lead-table-container" class="mb-8 flex flex-col justify-center items-center">
+            <div id="task-table-container" class="mb-8 flex flex-col justify-center items-center">
                 <div class="flex items-start my-4 gap-4">
                     <!-- Filter input -->
-                    <form class="flex gap-4 m-0" action="{{ route('get_leads') }}" method="GET">
+                    <form class="flex gap-4 m-0" action="{{ route('get_tasks') }}" method="GET">
                         <div class="flex items-center gap-2">
                             <div class="flex gap-2">
                                 <input class="border-grey-300 border-2 rounded p-1" type="text" name="search"
-                                    placeholder="Buscar leads..." value="{{ request('search') }}">
+                                    placeholder="Buscar tasks..." value="{{ request('search') }}">
                                 <button
                                     class="inline-flex w-full justify-center rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-600 sm:ml-3 sm:w-auto"
                                     type="submit">Buscar</button>
                             </div>
                             <div class="flex flex-col">
-                                <Label class="font-bold" for="status">Estado del Lead</Label>
+                                <Label class="font-bold" for="status">Estado de la tarea</Label>
                                 <select class="border-grey-300 border-2 rounded p-1" name="status">
                                     <option value="">Todos</option>
-                                    @foreach ($statuses as $status)
-                                        <option value="{{$status->name}}" {{ request('status') == $status->name ? 'selected' : '' }}>
-                                            {{$status->name}}
-                                        </option>
-                                    @endforeach
+                                    <option value="pending">Pendiente</option>
+                                    <option value="in_progress">En Progreso</option>
+                                    <option value="completed">Completado</option>
                                 </select>
                             </div>
                         </div>
                     </form>
+
                     <form class="flex gap-4 m-0" action="{{ route('get_leads') }}" method="GET">
                         <div class="flex items-center justify-center">
                             <button
@@ -69,44 +68,42 @@
                 <!-- Projects table -->
                 <div class="overflow-auto w-full flex items-center lg:justify-center flex-col">
                     <div class="min-h-[25rem] overflow-auto w-fit flex flex-col items-center max-h-80">
-                        <table id="lead_table">
+                        <table id="task_table">
                             <tr>
                                 <td class="first:rounded-l px-4 py-2 bg-blue-500 text-white">ID</td>
-                                <td class="first:rounded-l px-4 py-2 bg-blue-500 text-white">Nombre</td>
-                                <td class="px-4 py-2 bg-blue-500 text-white">Apellido</td>
-                                <td class="px-4 py-2 bg-blue-500 text-white">Correo Electrónico</td>
-                                <td class="px-4 py-2 bg-blue-500 text-white">País</td>
-                                <td class="px-4 py-2 bg-blue-500 text-white">Ciudad</td>
-                                <td class="px-4 py-2 bg-blue-500 text-white">Teléfono</td>
+                                <td class="first:rounded-l px-4 py-2 bg-blue-500 text-white">Titulo</td>
+                                <td class="px-4 py-2 bg-blue-500 text-white">Descripción</td>
+                                <td class="px-4 py-2 bg-blue-500 text-white">Fecha de entrega</td>
+                                <td class="px-4 py-2 bg-blue-500 text-white">Proyecto</td>
+                                <td class="px-4 py-2 bg-blue-500 text-white">Usuario asignado</td>
                                 <td class="px-4 py-2 bg-blue-500 text-white">Estado</td>
                                 <td class="bg-blue-500 text-white rounded-r px-4 py-2"></td>
 
                             </tr>
-                            @if($leads->count())
-                                @foreach ($leads as $lead)
+                            @if($tasks->count())
+                                @foreach ($tasks as $task)
                                     <tr>
-                                        <td class="border-b border-gray-300 p-4 bg-gray-100 relative">{{ $lead->id }}</td>
-                                        <td class="border-b border-gray-300 p-4 bg-gray-100 relative">{{ $lead->name }}</td>
+                                        <td class="border-b border-gray-300 p-4 bg-gray-100 relative">{{ $task->id }}</td>
+                                        <td class="border-b border-gray-300 p-4 bg-gray-100 relative">{{ $task->title }}</td>
                                         <td class="border-b border-gray-300 p-4 bg-gray-100 relative break-all max-w-80">
-                                            {{ $lead->lastname }}
+                                            {{ $task->description }}
                                         </td>
                                         <td
-                                            class="border-b border-gray-300 p-4 bg-gray-100 relative text-{{$lead->status === 'active' ? 'emerald' : 'blue'}}-500">
-                                            {{$lead->email}}
+                                            class="border-b border-gray-300 p-4 bg-gray-100 relative text-{{$task->status === 'active' ? 'emerald' : 'blue'}}-500">
+                                            {{$task->due_date}}
                                         </td>
                                         <td class="border-b border-gray-300 p-4 bg-gray-100 relative">
-                                            {{ $lead->country }}
+                                            {{ $task->project ? $task->project->title : 'No asignado' }}
                                         </td>
-                                        <td class="border-b border-gray-300 p-4 bg-gray-100 relative">{{ $lead->city }}
+                                        <td class="border-b border-gray-300 p-4 bg-gray-100 relative">
+                                            {{ $task->user ? $task->user->name : 'No asignado' }}
                                         </td>
-                                        <td class="border-b border-gray-300 p-4 bg-gray-100 relative">{{ $lead->phone }}
-                                        </td>
-                                        <td class="border-b border-gray-300 p-4 bg-gray-100 relative">{{ $lead->status->name }}
+                                        <td class="border-b border-gray-300 p-4 bg-gray-100 relative">{{ $task->status }}
                                         </td>
                                         <td class="border-b border-gray-300 p-4 bg-gray-100 relative">
                                             <div class="flex flex-wrap gap-2">
                                                 <div>
-                                                    <button id="edit_lead" label="editar"
+                                                    <button id="edit_task" label="editar"
                                                         class="relative inline-flex w-fit text-center justify-center rounded-md bg-yellow-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-yellow-600 sm:w-auto disabled:bg-gray-500">
                                                         <svg width="24" height="24" viewBox="0 -960 960 960">
                                                             <path fill="white"
@@ -114,11 +111,11 @@
                                                         </svg>
                                                     </button>
                                                 </div>
-                                                <form class="m-0" action="{{ route('destroy_leads', $lead->id) }}" method="POST"
+                                                <form class="m-0" action="{{ route('destroy_tasks', $task->id) }}" method="POST"
                                                     style="display:inline-block;">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button id="delete_lead" label="eliminar"
+                                                    <button id="delete_task" label="eliminar"
                                                         class="inline-flex w-fit text-center justify-center rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-600 sm:w-auto disabled:bg-gray-500"
                                                         type="submit">
                                                         <svg width="24" height="24" viewBox="0 -960 960 960">
@@ -133,20 +130,20 @@
                                     </tr>
                                 @endforeach
                             @endif
-                        </table>
-                        @if(!$leads->count())
+                        </table> 
+                        @if(!$tasks->count())
                             <div>
                                 <h1>* No hay Datos *</h1>
                             </div>
                         @endif
                     </div>
 
-                    @if($leads->count())
+                    @if($tasks->count())
                         <div class="flex items-center justify-center w-full mt-8 gap-8">
-                            {{$leads->appends(request()->except('page'))->links('vendor.pagination.tailwind')}}
-                            @if ($leads->lastPage() > 1 || $leads->count() > 5)
+                            {{$tasks->appends(request()->except('page'))->links('vendor.pagination.tailwind')}}
+                            @if ($tasks->lastPage() > 1 || $tasks->count() > 5)
                                 <form class="flex items-center justify-center gap-2" method="GET"
-                                    action="{{ route('leads_page') }}" class="mb-4">
+                                    action="{{ route('tasks_page') }}" class="mb-4">
                                     <label for="page_size">Elementos:</label>
                                     <select id="page_size" class="border-grey-300 border-2 rounded p-1" name="page_size"
                                         onchange="this.form.submit()">
@@ -161,11 +158,11 @@
                     @endif
 
                     @if ($errors->any())
-                        <!-- Edit/Create lead dialog -->
-                        <x-lead_dialog id="lead_dialog" class="block" :statuses="$statuses"></x-lead_dialog>
+                        <!-- Edit/Create task dialog -->
+                        <x-task_dialog id="task_dialog" class="block" :users="$users"></x-task_dialog>
                     @else
-                        <!-- Edit/Create lead dialog -->
-                        <x-lead_dialog id="lead_dialog" class="hidden" :statuses="$statuses"></x-lead_dialog>
+                        <!-- Edit/Create task dialog -->
+                        <x-task_dialog id="task_dialog" class="hidden" :users="$users"></x-task_dialog>
                     @endif
                 </div>
             </div>
@@ -173,4 +170,4 @@
         </div>
     </div>
 </x-app-layout>
-<script src="{{ asset('js/leads.js') }}"></script>
+<script src="{{ asset('js/tasks.js') }}"></script>

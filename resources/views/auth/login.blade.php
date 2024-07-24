@@ -12,7 +12,7 @@
                 <!-- Email Address -->
                 <div class="flex flex-col">
                     <label for="email">Email</label>
-                    <input class="border-black border-2 rounded-md p-1" id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+                    <input class="border-grey-300 border-2 rounded p-1" id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
                     @foreach ((array) $errors->get('email') as $message)
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @endforeach
@@ -21,7 +21,7 @@
                 <!-- Password -->
                 <div class="flex flex-col">
                     <label for="password">Password</label>
-                    <input class="border-black border-2 rounded-md p-1" 
+                    <input class="border-grey-300 border-2 rounded p-1" 
                         id="password"
                         type="password"
                         name="password"
@@ -37,6 +37,10 @@
 
                 <div class="flex justify-center items-center">
                     <a class="underline text-gray-400" href="{{route('register')}}">Registrarse</a>
+                </div>
+
+                <div class="flex justify-center items-center">
+                    <a class="underline text-gray-400" href="{{route('password_request')}}">Olvidé mi contraseña</a>
                 </div>
         </form>
     </div>

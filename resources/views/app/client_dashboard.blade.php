@@ -11,28 +11,28 @@
                     <!-- Name -->
                     <div class="flex flex-col">
                         <label for="subject">Asunto</label>
-                        <input class="border-black border-2 rounded-md p-1" id="subject" type="text" name="subject">
+                        <input class="border-grey-300 border-2 rounded p-1" id="subject" type="text" name="subject">
                     </div>
 
                     <!-- Description -->
                     <div class="flex flex-col">
                         <label for="description">Descripción</label>
-                        <textarea class="border-black border-2 rounded-md p-1" id="description"
+                        <textarea class="border-grey-300 border-2 rounded p-1" id="description"
                             name="description"></textarea>
                     </div>
 
                     <!-- Status Select -->
                     <div class="flex flex-col">
-                        <label for="status">Estado</label>
                         @if (Auth::user()->role->name == "admin")
-                            <select class="border-black border-2 rounded-md p-1" name="status" id="status">
+                            <label for="status">Estado</label>
+                            <select class="border-grey-300 border-2 rounded p-1" name="status" id="status">
                                 <option value="">-- Elije una opción --</option>
                                 <option value="pending">Pendiente</option>
                                 <option value="resolved">Resulto</option>
                                 <option value="closed">Cerrado</option>
                             </select>
                         @else
-                            <select class="border-black border-2 rounded-md p-1" name="status" id="status">
+                            <select class="border-grey-300 border-2 rounded p-1 hidden" name="status" id="status" disabled>
                                 <option value="pending">Pendiente</option>
                             </select>
                         @endif

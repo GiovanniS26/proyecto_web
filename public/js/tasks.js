@@ -2,16 +2,18 @@ const localUrl = "http://localhost:80/proyecto_laravel/public";
 
 function openDialog(fill) {
     let dialog, form;
-    dialog = document.getElementById(`ticket_dialog`);
-    form = document.getElementById("ticket_form");
+    dialog = document.getElementById(`task_dialog`);
+    form = document.getElementById("task_form");
 
     document
-        .getElementById(`ticket_close_dialog`)
+        .getElementById(`task_close_dialog`)
         .addEventListener("click", (e) => {
             dialog.style.display = "none";
-            document.getElementById("subject").value = "";
+
+            document.getElementById("title").value = "";
             document.getElementById("description").value = "";
             document.getElementById("status").value = "";
+            document.getElementById("due_date").value = "";
             const membersCheckboxes = document.querySelectorAll(
                 'input[name="user_id"]'
             );
@@ -28,13 +30,15 @@ function openDialog(fill) {
         membersCheckboxes.forEach((checkbox) => {
             checkbox.checked = fill.user_id === parseInt(checkbox.value);
         });
+        form.action = `${localUrl}/update_tasks/${fill.id}`;
 
-        form.action = `${localUrl}/update_tickets/${fill.id}`;
-        document.getElementById("subject").value = fill.subject;
+        document.getElementById("title").value = fill.title;
         document.getElementById("description").value = fill.description;
         document.getElementById("status").value = fill.status;
+        document.getElementById("due_date").value = fill.due_date;
+        document.getElementById("project_id").value = fill.project_id;
     } else {
-        form.action = `${localUrl}/tickets`;
+        form.action = `${localUrl}/tasks`;
     }
 
     dialog.style.display = "block";
@@ -89,37 +93,25 @@ function createTooltip(button) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    document
-        .getElementById(`create_ticket_button`)
-        .addEventListener("click", () => {
-            openDialog();
-        });
-
     createTooltip(document.getElementById("refresh_table_button"));
 
-    document.querySelectorAll("[id=edit_ticket]").forEach((button, index) => {
-        button.addEventListener("click", (button) => {
-            openDialog(tickets.data[index]);
+    document.querySelectorAll("[id=edit_task]").forEach((button, index) => {
+        button.addEventListener("click", () => {
+            openDialog(tasks.data[index]);
         });
         createTooltip(button);
     });
 
-    document.querySelectorAll("[id=delete_ticket]").forEach((button, index) => {
+    document.querySelectorAll("[id=delete_task]").forEach((button) => {
+        createTooltip(button);
+    });
+    
+    document.querySelectorAll("[id=status_task]").forEach((button) => {
         createTooltip(button);
     });
 
-    document
-        .querySelectorAll("[id=resolve_ticket]")
-        .forEach((button, index) => {
-            createTooltip(button);
-        });
-
-    document.querySelectorAll("[id=close_ticket]").forEach((button, index) => {
-        createTooltip(button);
-    });
-
-    let ticket_dialog = document.getElementById("ticket_dialog");
-    if (ticket_dialog && [...ticket_dialog.classList].includes("block")) {
+    let task_dialog = document.getElementById("task_dialog");
+    if (task_dialog && [...task_dialog.classList].includes("block")) {
         openDialog();
     }
 

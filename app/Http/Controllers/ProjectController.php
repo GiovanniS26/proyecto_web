@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Task;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
@@ -26,11 +27,10 @@ class ProjectController extends Controller
 
             if (!empty($search)) {
                 $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%$search%")
-                        ->orWhere('email', 'like', "%$search%")
-                        ->orWhere('phone', 'like', "%$search%")
-                        ->orWhere('address', 'like', "%$search%")
-                        ->orWhere('birthdate', 'like', "%$search%");
+                    $q->where('title', 'like', "%$search%")
+                        ->orWhere('description', 'like', "%$search%")
+                        ->orWhere('start_date', 'like', "%$search%")
+                        ->orWhere('end_date', 'like', "%$search%");
                 });
             }
 
@@ -78,9 +78,7 @@ class ProjectController extends Controller
             $project->members()->sync($request->input('members'));
         }
 
-        Project::create($validatedData);
-
-        return redirect()->route('projects_page')->with('success', 'Project created successfully.');
+        return redirect()->route('projects_page')->with('success', 'Proyecto creado exitosamente.');
     }
 
     public function update(Request $request, $id)
@@ -97,7 +95,12 @@ class ProjectController extends Controller
 
         // Encontrar y actualizar el proyecto
         $project = Project::findOrFail($id);
-        $project_updated = $project->update([
+
+        if (!$project) {
+            return redirect()->route('projects_page')->with('error', 'Proyecto no encontrado.');
+        }
+
+        $project->update([
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
             'status' => $validatedData['status'],
@@ -113,28 +116,57 @@ class ProjectController extends Controller
             $project->members()->sync([]);
         }
 
-        Log::info('Data from Controller:', [$project_updated]);
-
-        return redirect()->route('projects_page')->with('success', 'Project updated successfully.');
+        return redirect()->route('projects_page')->with('success', 'Proyecto actualizado exitosamente.');
     }
 
-    public function members($id)
-    {
+    public function destroy($id)
+    {  
         $project = Project::findOrFail($id);
-
-        // Obtener la lista de usuarios asignados al proyecto
-        $assignedUsers = $project->members->pluck('id')->toArray();
-
-        return response()->json([
-            'assignedUsers' => $assignedUsers,
-        ]);
-    }
-
-    public function destroy(Project $project)
-    {  //borrar proyecto
+        
+        if (!$project) {
+            return redirect()->route('projects_page')->with('error', 'Proyecto no encontrado.');
+        }
+        
         $project->members()->sync([]);
         $project->delete();
-        return redirect()->route('projects_page')->with('success', 'Project deleted successfully.');
+        return redirect()->route('projects_page')->with('success', 'Proyecto eliminado exitosamente.');
     }
 
+    public function details(Request $request, $id)
+    {
+        $project = Project::with('members', 'tasks')->findOrFail($id);
+        
+        if (!$project) {
+            return redirect()->route('projects_page')->with('error', 'Proyecto no encontrado.');
+        }
+        
+        $members = $project->members;
+
+        $query = Task::query();
+
+        $search = $request->input('search', '');
+        $status = $request->input('status', '');
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%$search%")
+                    ->orWhere('description', 'like', "%$search%")
+                    ->orWhere('due_date', 'like', "%$search%")
+                    ->orWhereHas('user', function ($query) use ($search) {
+                        $query->where('name', 'like', "%$search%");
+                    });
+            });
+        }
+
+        $query->where('project_id', $id);
+
+        if (!empty($status)) {
+            $query->where('status', $status);
+        }
+
+        $pageSize = $request->input('page_size', 5);
+        $tasks = $query->with('project', 'user')->paginate($pageSize);
+        
+        return view('app.app_pages.project_details', compact('project', 'members', 'tasks'));
+    }
 }

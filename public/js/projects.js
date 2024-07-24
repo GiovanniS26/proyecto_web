@@ -76,7 +76,7 @@ function createTooltip(button) {
     button.addEventListener("mouseover", function () {
         // Crear el elemento tooltip
         let tooltip = document.createElement("span");
-        tooltip.innerText = button.getAttribute("name");
+        tooltip.innerText = button.getAttribute("label");
         tooltip.className += "p-2 bg-gray-700 text-white rounded absolute z-10";
 
         // Posicionar el tooltip
@@ -99,8 +99,6 @@ function createTooltip(button) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    //makeRequest("GET", `${localUrl}/projects`, load_info);
-
     document
         .getElementById(`create_project_button`)
         .addEventListener("click", () => {
@@ -109,8 +107,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     createTooltip(document.getElementById("refresh_table_button"));
 
-    document.querySelectorAll("[id=edit_project]").forEach((button, index) => {
-        button.addEventListener("click", (button) => {
+    document.querySelectorAll("[name=edit_button]").forEach((button, index) => {
+        button.addEventListener("click", () => {
             openDialog(projects.data[index]);
         });
         createTooltip(button);
@@ -118,10 +116,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document
         .querySelectorAll("[id=delete_project]")
-        .forEach((button, index) => {
-            button.addEventListener("click", (button) => {
-                openDialog(projects.data[index]);
-            });
+        .forEach((button) => {
+            createTooltip(button);
+        });
+
+    document
+        .querySelectorAll("[id=status_project]")
+        .forEach((button) => {
             createTooltip(button);
         });
 

@@ -14,8 +14,8 @@ class Task extends Model
         'user_id',
         'title',
         'description',
-        'status',
-        'due_date'
+        'due_date',
+        'status'
     ];
 
     public function project()
@@ -28,3 +28,4 @@ class Task extends Model
         return $this->belongsTo(User::class);
     }
 }
+

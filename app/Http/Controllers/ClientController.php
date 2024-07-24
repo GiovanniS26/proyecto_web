@@ -9,14 +9,9 @@ use Illuminate\View\View;
 
 class ClientController extends Controller
 {
-    /**
-     * Retorna la vista del dashboard según el rol,
-     * si es Admin podrá ver el dashboard de admin, sino
-     * se le mostrará el dashboard de cliente
-     */
     public function index(Request $request): View
     {
-        if (auth()->user()->hasRole('admin')) {
+        if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('user')) {
             $query = Client::query();
 
             $search = $request->input('search', '');
@@ -60,7 +55,7 @@ class ClientController extends Controller
 
         Client::create($validatedData);
 
-        return redirect()->route('clients_page')->with('success', 'Client created successfully.');
+        return redirect()->route('clients_page')->with('success', 'Cliente creado exitosamente.');
     }
 
     public function update(Request $request, $id)
@@ -78,6 +73,11 @@ class ClientController extends Controller
 
         // Encontrar y actualizar el cliente
         $client = Client::findOrFail($id);
+
+        if (!$client) {
+            return redirect()->route('clients_page')->with('error', 'Cliente no encontrado.');
+        }
+        
         $client_updated = $client->update([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
@@ -89,48 +89,18 @@ class ClientController extends Controller
 
         Log::info('Data from Controller:', [$client_updated]);
 
-        return redirect()->route('clients_page')->with('success', 'Client updated successfully.');
+        return redirect()->route('clients_page')->with('success', 'Cliente actualizado exitosamente.');
     }
 
-    /*     public function index(){
-            $clients = Client::all();
-            return view('clientes.index', compact('clients'));
-        } */
-
-    public function show(Client $client)
+    public function destroy($id)
     {
-        //$cliente = Client::findOrFail($id); //parametro $id si no funciona de la otra forma, lo mismo va con update, destroy y demas
-        //return $cliente
-        return view('clientes.show', compact('client'));
-    }
+        $client = Client::findOrFail($id);
 
-    /*     public function create(){
-            return view('clientes.create');
-        } */
-    /*     public function store(Request $request){  //registrar cliente
-            $validatedDate = $request->validate([
-                'name' => 'required|max:40',
-                'email' => 'email|required|unique:users',
-                'phone' => 'required|max:11',
-                'type' => 'required|in:enterprise,user',
-                'direccion'=> 'required|max:200',
-                'date' => 'date|required',
-            ]);
-            Client::create($request->all());
-            $clients = Client::all();
-            return view('clientes.index', compact('clients'))->with('added', 'client added successfully');
-            //return Redirect::to('clientes.index', compact('clients'))->with('success', 'cliente agregado correctamente');
-        } */
-
-    public function destroy(Client $client)
-    {  //borrar cliente
+        if (!$client) {
+            return redirect()->route('clients_page')->with('error', 'Cliente no encontrado.');
+        }
+        
         $client->delete();
-        $clients = Client::all();
-        return view('clientes.index', compact('clients'))->with('success', 'client deleted successfully');
+        return redirect()->route('clients_page')->with('success', 'Cliente eliminado exitosamente.');
     }
-
-
-    /////////////7777777para los tickets/////////////////////////////////////
-
-
 }

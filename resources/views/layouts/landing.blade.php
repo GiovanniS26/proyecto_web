@@ -11,7 +11,7 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
         
         <link rel="stylesheet" type="text/css" href="{{ asset('styles.css') }}">
-        @vite('resources/css/app.css')
+        <!-- @vite('resources/css/app.css') -->
     </head>
     <body class="bg-sky">
         <header class="flex items-center justify-between h-16 w-full fixed bg-black z-50">
@@ -25,6 +25,7 @@
                 <a class="flex items-center p-2 text-white hover:animate-[pulse_2s_cubic-bezier(0.4,_0,_0.6,_1)_infinite] hover:duration-500 hover:-translate-y-2 hover:underline" href="{{route('index')}}">Inicio</a>
                 <a class="flex items-center p-2 text-white hover:animate-[pulse_2s_cubic-bezier(0.4,_0,_0.6,_1)_infinite] hover:duration-500 hover:-translate-y-2 hover:underline" href="{{route('gallery')}}">Galería</a>
                 <a class="flex items-center p-2 text-white hover:animate-[pulse_2s_cubic-bezier(0.4,_0,_0.6,_1)_infinite] hover:duration-500 hover:-translate-y-2 hover:underline" href="{{route('about')}}">Acerca de</a>
+                <a class="flex items-center p-2 text-white hover:animate-[pulse_2s_cubic-bezier(0.4,_0,_0.6,_1)_infinite] hover:duration-500 hover:-translate-y-2 hover:underline" href="{{route('info')}}">Información</a>
                 <a class="flex items-center p-2 text-white hover:underline bg-blue-500" href="{{route('login')}}">Iniciar Sesión</a>
             </nav>
         </header>
@@ -48,6 +49,9 @@
                         </li>
                         <li class="m-2 flex items-center">
                             <a class="text-white" href="{{route('about')}}">Acerca de</a>
+                        </li>
+                        <li class="m-2 flex items-center">
+                            <a class="text-white" href="{{route('info')}}">Información</a>
                         </li>
                         <li class="m-2 flex items-center">
                             <a class="text-white" href="{{route('login')}}">Iniciar Sesión</a>

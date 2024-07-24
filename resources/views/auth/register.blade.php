@@ -12,13 +12,13 @@
                 <!-- Name input -->
                 <div class="flex flex-col">
                     <label for="name">Name</label>
-                    <input class="border-black border-2 rounded-md p-1" id="name" type="text" name="name" required>
+                    <input class="border-grey-300 border-2 rounded p-1" id="name" type="text" name="name" required>
                 </div>
                 
                 <!-- Email input -->
                 <div class="flex flex-col">
                     <label for="email">Email</label>
-                    <input class="border-black border-2 rounded-md p-1" id="email" type="email" name="email" required>
+                    <input class="border-grey-300 border-2 rounded p-1" id="email" type="email" name="email" required>
                     @foreach ((array) $errors->get('email') as $message)
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @endforeach
@@ -27,7 +27,7 @@
                 <!-- Password input -->
                 <div class="flex flex-col">
                     <label for="password">Password</label>
-                    <input class="border-black border-2 rounded-md p-1" id="password" type="password" name="password" required>
+                    <input class="border-grey-300 border-2 rounded p-1" id="password" type="password" name="password" required>
                     <span id="password_match_error" class="text-red-500"></span>
                     <span id="password_minlength_error" class="text-red-500"></span>
                 </div>
@@ -35,7 +35,7 @@
                 <!-- Confirm Password input -->
                 <div class="flex flex-col">
                     <label for="confirm_password">Confirm Password</label>
-                    <input class="border-black border-2 rounded-md p-1" id="confirm_password" type="password" name="confirm_password" required>
+                    <input class="border-grey-300 border-2 rounded p-1" id="confirm_password" type="password" name="confirm_password" required>
                 </div>
                 
                 <button type="submit" class="underline">

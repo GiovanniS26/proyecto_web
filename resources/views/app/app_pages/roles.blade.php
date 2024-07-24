@@ -1,12 +1,12 @@
 <script>
-    var leads = @json($leads);
+    var roles = @json($roles);
 </script>
 
 <x-app-layout>
     <div class="h-full pl-32 pr-4 pt-24 overflow-auto">
         <div class="rounded bg-white p-4">
             <div class="flex items-center justify-center">
-                <h1 class="text-4xl">Leads</h1>
+                <h1 class="text-4xl">Roles</h1>
             </div>
             <!-- Response message -->
             <div id="response-message" class="flex flex-col items-center justify-center text-green-500">
@@ -27,31 +27,21 @@
                 </div>
             @endif
             <!-- User Table -->
-            <div id="lead-table-container" class="mb-8 flex flex-col justify-center items-center">
+            <div id="role-table-container" class="mb-8 flex flex-col justify-center items-center">
                 <div class="flex items-start my-4 gap-4">
                     <!-- Filter input -->
-                    <form class="flex gap-4 m-0" action="{{ route('get_leads') }}" method="GET">
+                    <form class="flex gap-4 m-0" action="{{ route('get_roles') }}" method="GET">
                         <div class="flex items-center gap-2">
                             <div class="flex gap-2">
                                 <input class="border-grey-300 border-2 rounded p-1" type="text" name="search"
-                                    placeholder="Buscar leads..." value="{{ request('search') }}">
+                                    placeholder="Buscar roles..." value="{{ request('search') }}">
                                 <button
                                     class="inline-flex w-full justify-center rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-600 sm:ml-3 sm:w-auto"
                                     type="submit">Buscar</button>
                             </div>
-                            <div class="flex flex-col">
-                                <Label class="font-bold" for="status">Estado del Lead</Label>
-                                <select class="border-grey-300 border-2 rounded p-1" name="status">
-                                    <option value="">Todos</option>
-                                    @foreach ($statuses as $status)
-                                        <option value="{{$status->name}}" {{ request('status') == $status->name ? 'selected' : '' }}>
-                                            {{$status->name}}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
                         </div>
                     </form>
+
                     <form class="flex gap-4 m-0" action="{{ route('get_leads') }}" method="GET">
                         <div class="flex items-center justify-center">
                             <button
@@ -64,62 +54,45 @@
                             </button>
                         </div>
                     </form>
+
+                    <!-- Create button -->
+                    <button id="create_role_button"
+                        class="inline-flex w-full justify-center rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 sm:w-auto disabled:bg-gray-500">
+                        Crear Rol
+                    </button>
                 </div>
 
-                <!-- Projects table -->
+                <!-- roles table -->
                 <div class="overflow-auto w-full flex items-center lg:justify-center flex-col">
                     <div class="min-h-[25rem] overflow-auto w-fit flex flex-col items-center max-h-80">
-                        <table id="lead_table">
-                            <tr>
+                        <table id="client_table" class="min-w-[30rem]">
+                            <tr class="">
                                 <td class="first:rounded-l px-4 py-2 bg-blue-500 text-white">ID</td>
-                                <td class="first:rounded-l px-4 py-2 bg-blue-500 text-white">Nombre</td>
-                                <td class="px-4 py-2 bg-blue-500 text-white">Apellido</td>
-                                <td class="px-4 py-2 bg-blue-500 text-white">Correo Electrónico</td>
-                                <td class="px-4 py-2 bg-blue-500 text-white">País</td>
-                                <td class="px-4 py-2 bg-blue-500 text-white">Ciudad</td>
-                                <td class="px-4 py-2 bg-blue-500 text-white">Teléfono</td>
-                                <td class="px-4 py-2 bg-blue-500 text-white">Estado</td>
+                                <td class="px-4 py-2 bg-blue-500 text-white">Nombre</td>
                                 <td class="bg-blue-500 text-white rounded-r px-4 py-2"></td>
-
                             </tr>
-                            @if($leads->count())
-                                @foreach ($leads as $lead)
+                            @if($roles->count())
+                                @foreach ($roles as $role)
                                     <tr>
-                                        <td class="border-b border-gray-300 p-4 bg-gray-100 relative">{{ $lead->id }}</td>
-                                        <td class="border-b border-gray-300 p-4 bg-gray-100 relative">{{ $lead->name }}</td>
-                                        <td class="border-b border-gray-300 p-4 bg-gray-100 relative break-all max-w-80">
-                                            {{ $lead->lastname }}
-                                        </td>
-                                        <td
-                                            class="border-b border-gray-300 p-4 bg-gray-100 relative text-{{$lead->status === 'active' ? 'emerald' : 'blue'}}-500">
-                                            {{$lead->email}}
-                                        </td>
-                                        <td class="border-b border-gray-300 p-4 bg-gray-100 relative">
-                                            {{ $lead->country }}
-                                        </td>
-                                        <td class="border-b border-gray-300 p-4 bg-gray-100 relative">{{ $lead->city }}
-                                        </td>
-                                        <td class="border-b border-gray-300 p-4 bg-gray-100 relative">{{ $lead->phone }}
-                                        </td>
-                                        <td class="border-b border-gray-300 p-4 bg-gray-100 relative">{{ $lead->status->name }}
-                                        </td>
+                                        <td class="border-b border-gray-300 p-4 bg-gray-100 relative">{{ $role->id }}</td>
+                                        <td class="border-b border-gray-300 p-4 bg-gray-100 relative">{{ $role->name }}</td>
                                         <td class="border-b border-gray-300 p-4 bg-gray-100 relative">
                                             <div class="flex flex-wrap gap-2">
                                                 <div>
-                                                    <button id="edit_lead" label="editar"
-                                                        class="relative inline-flex w-fit text-center justify-center rounded-md bg-yellow-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-yellow-600 sm:w-auto disabled:bg-gray-500">
+                                                    <button id="edit_role" label="editar"
+                                                        class="inline-flex w-full justify-center rounded-md bg-yellow-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-yellow-600 sm:w-auto disabled:bg-gray-500">
                                                         <svg width="24" height="24" viewBox="0 -960 960 960">
                                                             <path fill="white"
                                                                 d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z" />
                                                         </svg>
                                                     </button>
                                                 </div>
-                                                <form class="m-0" action="{{ route('destroy_leads', $lead->id) }}" method="POST"
+                                                <form class="m-0" action="{{ route('destroy_roles', $role->id) }}" method="POST"
                                                     style="display:inline-block;">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button id="delete_lead" label="eliminar"
-                                                        class="inline-flex w-fit text-center justify-center rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-600 sm:w-auto disabled:bg-gray-500"
+                                                    <button id="delete_role" label="eliminar"
+                                                        class="inline-flex w-full justify-center rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-600 sm:w-auto disabled:bg-gray-500"
                                                         type="submit">
                                                         <svg width="24" height="24" viewBox="0 -960 960 960">
                                                             <path fill="white"
@@ -134,19 +107,19 @@
                                 @endforeach
                             @endif
                         </table>
-                        @if(!$leads->count())
+                        @if(!$roles->count())
                             <div>
                                 <h1>* No hay Datos *</h1>
                             </div>
                         @endif
                     </div>
 
-                    @if($leads->count())
+                    @if($roles->count())
                         <div class="flex items-center justify-center w-full mt-8 gap-8">
-                            {{$leads->appends(request()->except('page'))->links('vendor.pagination.tailwind')}}
-                            @if ($leads->lastPage() > 1 || $leads->count() > 5)
+                            {{$roles->appends(request()->except('page'))->links('vendor.pagination.tailwind')}}
+                            @if ($roles->lastPage() > 1 || $roles->count() > 5)
                                 <form class="flex items-center justify-center gap-2" method="GET"
-                                    action="{{ route('leads_page') }}" class="mb-4">
+                                    action="{{ route('roles_page') }}" class="mb-4">
                                     <label for="page_size">Elementos:</label>
                                     <select id="page_size" class="border-grey-300 border-2 rounded p-1" name="page_size"
                                         onchange="this.form.submit()">
@@ -160,12 +133,11 @@
                         </div>
                     @endif
 
+                    <!-- Edit/Create role dialog -->
                     @if ($errors->any())
-                        <!-- Edit/Create lead dialog -->
-                        <x-lead_dialog id="lead_dialog" class="block" :statuses="$statuses"></x-lead_dialog>
+                        <x-role_dialog id="role_dialog" class="block" :roles="$roles"></x-role_dialog>
                     @else
-                        <!-- Edit/Create lead dialog -->
-                        <x-lead_dialog id="lead_dialog" class="hidden" :statuses="$statuses"></x-lead_dialog>
+                        <x-role_dialog id="role_dialog" class="hidden" :roles="$roles"></x-role_dialog>
                     @endif
                 </div>
             </div>
@@ -173,4 +145,5 @@
         </div>
     </div>
 </x-app-layout>
-<script src="{{ asset('js/leads.js') }}"></script>
+<script src="{{ asset('js/roles.js') }}"></script>
+<script src="{{ asset('js/app.js') }}"></script>

@@ -2,33 +2,21 @@ const localUrl = "http://localhost:80/proyecto_laravel/public";
 
 function openDialog(fill) {
     let dialog, form;
-    dialog = document.getElementById(`client_dialog`);
-    form = document.getElementById("client_form");
-
+    dialog = document.getElementById(`role_dialog`);
     document
-        .getElementById(`client_close_dialog`)
+        .getElementById(`role_close_dialog`)
         .addEventListener("click", (e) => {
             dialog.style.display = "none";
             if (fill) {
                 document.getElementById("name").value = "";
-                document.getElementById("email").value = "";
-                document.getElementById("phone").value = "";
-                document.getElementById("address").value = "";
-                document.getElementById("type").value = "";
-                document.getElementById("birthdate").value = "";
             }
         });
-
+    form = document.getElementById(`role_form`);
+    form.action = fill
+        ? `${localUrl}/update_roles/${fill.id}`
+        : `${localUrl}/roles`;
     if (fill) {
-        form.action = `${localUrl}/update_clients/${fill.id}`;
-        document.getElementById("name").value = fill.name;
-        document.getElementById("email").value = fill.email;
-        document.getElementById("phone").value = fill.phone;
-        document.getElementById("address").value = fill.address;
-        document.getElementById("type").value = fill.type;
-        document.getElementById("birthdate").value = fill.birthdate;
-    } else {
-        form.action = `${localUrl}/clients`;
+        document.getElementById(`name`).value = fill.name;
     }
 
     dialog.style.display = "block";
@@ -62,26 +50,26 @@ function createTooltip(button) {
 
 document.addEventListener("DOMContentLoaded", function () {
     document
-        .getElementById(`create_client_button`)
+        .getElementById(`create_role_button`)
         .addEventListener("click", () => {
             openDialog();
         });
 
     createTooltip(document.getElementById("refresh_table_button"));
 
-    document.querySelectorAll("[id=edit_client]").forEach((button, index) => {
-        button.addEventListener("click", (button) => {
-            openDialog(clients.data[index]);
+    document.querySelectorAll("[id=edit_role]").forEach((button, index) => {
+        button.addEventListener("click", () => {
+            openDialog(roles.data[index]);
         });
         createTooltip(button);
     });
 
-    document.querySelectorAll("[id=delete_client]").forEach((button, index) => {
+    document.querySelectorAll("[id=delete_role]").forEach((button, index) => {
         createTooltip(button);
     });
 
-    let client_dialog = document.getElementById("client_dialog");
-    if (client_dialog && [...client_dialog.classList].includes("block")) {
+    let role_dialog = document.getElementById("role_dialog");
+    if (role_dialog && [...role_dialog.classList].includes("block")) {
         openDialog();
     }
 });

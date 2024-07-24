@@ -12,14 +12,20 @@ class Lead extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'subject',
-        'status',
-        'description',
-        'assigned_to_user_id',
+        'name',
+        'lastname',
+        'email',
+        'country',
+        'city',
+        'phone',
+        'status_id'
     ];
-
-    public function user()
+    
+    /**
+     * Obtiene el estado del lead.
+     */
+    public function status()
     {
-        return $this->belongsTo(User::class, 'assigned_to_user_id');
+        return $this->belongsTo(LeadStatus::class, 'status_id');
     }
 }

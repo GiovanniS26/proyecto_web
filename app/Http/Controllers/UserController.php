@@ -7,47 +7,31 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
 class UserController extends Controller
 {
-
-    // Devuelve la vista para el login.
-    public function login_create(): View
-    {
-        return view("auth.login");
-    }
-
     /**
-     * Hace el login de la aplicación, si las credenciales son correctas
-     * redirige hacía el login, sino retorna con un error.
+     * Retorna la vista del dashboard según el rol,
+     * si es Admin podrá ver el dashboard de admin, sino
+     * se le mostrará el dashboard de cliente
      */
-    public function login_store(Request $request)
+    public function index(Request $request): View
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        if (auth()->user()->hasRole('admin')) {
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+            // Obtener el tamaño de la página desde la solicitud, o usar un valor predeterminado
+            $pageSize = $request->input('page_size', 5);
+            $users = User::with('role')->paginate($pageSize);
 
-            return redirect()->intended('dashboard');
+            $roles = Role::all();
+
+            return view('app.app_pages.users', compact('users', 'roles'));
         }
 
-        return back()->withErrors([
-            'email' => 'Email o contraseña incorrectos.',
-        ])->onlyInput('email');
-    }
-
-    // Devuelve la vista para el registro.
-    public function register_create(): View
-    {
-        //
-        return view("auth.register");
+        return view('app.user_dashboard');
     }
 
     /**
@@ -55,7 +39,7 @@ class UserController extends Controller
      * si no existe coincidencia con algún correo existente, se procede a su creación.
      * Luego se redirige de nuevo al login.
      */
-    public function register_store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         //
         $request->merge([
@@ -79,46 +63,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect(route('login', absolute: false));
-    }
-
-    /**
-     * Retorna la vista del dashboard según el rol,
-     * si es Admin podrá ver el dashboard de admin, sino
-     * se le mostrará el dashboard de cliente
-     */
-    public function users(Request $request): View
-    {
-        if (auth()->user()->hasRole('admin')) {
-
-            // Obtener el tamaño de la página desde la solicitud, o usar un valor predeterminado
-            $pageSize = $request->input('page_size', 5);
-            $users = User::with('role')->paginate($pageSize);
-
-            return view('app.app_pages.users', compact('users'));
-        }
-
-        return view('app.user_dashboard');
-    }
-
-    /**
-     * Crea un nuevo rol, primero se valida que no exista uno con el mismo nombre.
-     * De no ser el caso, se procede a su creación y redirección al dashboard, con
-     * el fin de actualizar la información en pantalla.
-     */
-    public function create_roles(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:' . Role::class],
-        ], [
-            'name.unique' => 'Ya existe un rol con este nombre.'
-        ]);
-
-        $role = Role::create([
-            'name' => $request->name,
-        ]);
-
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->route('users_page')->with('success', 'Usuario creado correctamente');
     }
 
     /**
@@ -128,9 +73,14 @@ class UserController extends Controller
      * Luego se procede a actualizar y redirigir al dashboard con el fin de actualizar
      * la información en pantalla.
      */
-    public function update_users(Request $request, $id)
+    public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
+
+        if (!$user) {
+            return redirect()->route('users_page')->with('error', 'Usuario no encontrado.');
+        }
+
         if ($request->email !== $user->email) {
             $request->validate([
                 'name' => ['required', 'string', 'max:255'],
@@ -166,32 +116,7 @@ class UserController extends Controller
 
         $user->update($userData);
 
-        return redirect()->route('dashboard')->with('response', 'Usuario actualizado correctamente');
-    }
-    /**
-     * Actualizar un rol
-     * @param $id del rol a actualizar
-     * Se verifica y valida que no haya coincidencia con otro rol
-     * También se verifica que no existan usuarios bajo ese rol antes de poder cambiarlo
-     */
-    public function update_roles(Request $request, $id)
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:' . Role::class],
-        ], [
-            'name.unique' => 'Ya existe un rol con este nombre.'
-        ]);
-
-        $role = Role::where('id', $id)->first();
-        $users = $role->users;
-        if ($users->count() > 0) {
-            return redirect()->route('dashboard')->with('response', 'No puedes actualizar un Rol con usuarios adjuntos.');
-        } else {
-            $role->update([
-                'name' => $request->name,
-            ]);
-            return redirect()->route('dashboard')->with('response', 'Rol actualizado correctamente.');
-        }
+        return redirect()->route('users_page')->with('success', 'Usuario actualizado correctamente');
     }
 
     /**
@@ -199,78 +124,15 @@ class UserController extends Controller
      * @param $id del usuario a eliminar.
      * Retorna un json con un mensaje para imprimirlon por pantalla.
      */
-    public function destroy_users($id)
+    public function destroy($id)
     {
         $user = User::findOrFail($id);
-        if ($user) {
-            $user->delete();
-            return response()->json([
-                'success' => true,
-                'message' => 'Usuario borrado con éxito.',
-            ]);
+
+        if (!$user) {
+            return redirect()->route('users_page')->with('error', 'Usuario no encontrado.');
         }
-        return response()->json([
-            'success' => false,
-            'message' => 'No se ha podido borrar el usuario.',
-        ]);
+
+        $user->delete();
+        return redirect()->route('users_page')->with('success', 'Usuario borrado correctamente');
     }
-
-    /**
-     * Elimina un rol en base a su id
-     * @param $id del rol a eliminar
-     * Si existen usuarios adjuntos a ese rol, no se podrá eliminar el rol.
-     */
-    public function destroy_roles($id)
-    {
-        $role = Role::where('id', $id)->first();
-        $users = $role->users;
-        if ($users->count() > 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No puedes borrar un rol con usuarios adjuntos.',
-            ]);
-        } else {
-            $role->delete();
-            return response()->json([
-                'success' => true,
-                'message' => 'Rol eliminado con éxito.',
-            ]);
-        }
-    }
-
-    /**
-     * Funcion de logout
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        Auth::guard('web')->logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
-
-        return redirect('/');
-    }
-
-    /**
-     * Retorna todos los usuarios
-     */
-    public function get_users()
-    {
-        $users = User::with('role')->all();
-
-        return $users;
-    }
-
-    /**
-     * Rertorna todos los roles
-     */
-    public function get_roles()
-    {
-        $roles = Role::all();
-
-        return $roles;
-    }
-
-
 }
