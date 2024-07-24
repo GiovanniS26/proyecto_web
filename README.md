@@ -1,3 +1,11 @@
+# Integrantes
+
+Giovanni Silvestri C.I. 26.581.854
+
+Jholbert Silva C.I. 27.188.679
+
+Gustavo Morillo C.I. 26.160.169
+
 # Proyecto web con Laravel
 
 Este es un pequeño proyecto que demuestra las habilidades aprendidas con el framework Laravel. El objetivo de este proyecto era realizar un Landing Page, con su respectivo apartado de Autenticación, Registro y Administración de usuarios. Y así demostrar las habilidades aprendidads.
